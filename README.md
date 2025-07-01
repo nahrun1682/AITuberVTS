@@ -1,7 +1,7 @@
-# 🎭 AITuberUniPy (VTube Studio版)
+# 🎭 AITuberVTS (VTube Studio連携AIプロジェクト)
 
-**AITuberUniPy** は、Pythonによる会話生成・音声合成を通じて、**VTube Studio** のLive2Dモデルを制御する AITuber プロジェクトです。  
-この構成は「Python = 魂」「VTS = 実体」として、喋る・動く・感じるAIの舞台を実現いたしますわ🕊️
+**AITuberVTS** は、Pythonによる会話生成・音声合成を通じて、**VTube Studio** のLive2Dモデルを制御するAIプロジェクトです。  
+この構成は「Python = 魂」「VTS = 実体」として、喋る・動く・感じるAIの舞台を実現します。
 
 ---
 
@@ -10,8 +10,8 @@
 - 🎤 ChatGPTやLangChainで発話を生成
 - 🗣 VOICEVOXなどで音声合成
 - 🧠 感情や状況に応じた表情・モーション制御
-- 📡 VTube StudioのWebSocket APIによりPush通信で表情変更
-- 🔄 Unityを使わず、既存のVTSモデルを活用して開発を高速化
+- 📡 VTube StudioのWebSocket APIで表情・モーションをリアルタイム制御
+- 🔄 Unity不要、既存のVTSモデルを活用して高速開発
 
 ---
 
@@ -21,9 +21,9 @@
 AITuberVTS/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py            # FastAPIエントリポイント（必要に応じて）
-│   │   ├── llm/               # 発話生成ロジック（ChatGPTなど）
-│   │   ├── tts/               # 音声合成（VOICEVOX）
+│   │   ├── main.py            # FastAPIエントリポイント
+│   │   ├── llm/               # 発話生成ロジック
+│   │   ├── tts/               # 音声合成
 │   │   ├── vts_client/        # VTS API制御クライアント
 │   │   ├── memory/            # 会話履歴やキャラ設定
 │   │   └── config/            # VTS接続・モデル設定
@@ -64,7 +64,7 @@ poetry install
 ### 2. 必要パッケージ追加
 
 ```bash
-poetry add fastapi websockets openai langchain httpx
+poetry add fastapi websockets openai langchain httpx python-dotenv
 ```
 
 ### 3. `.env` を作成
@@ -94,11 +94,26 @@ VTS_PORT=8001
 ## 🔧 VTS制御例（Python）
 
 ```python
-async def trigger_expression(hotkey_id: str):
-    await websocket.send_json({
-        "messageType": "HotkeyTriggerRequest",
-        "data": { "hotkeyID": hotkey_id }
-    })
+import asyncio
+import websockets
+import json
+
+async def trigger_expression(hotkey_id: str, host="localhost", port=8001):
+    uri = f"ws://{host}:{port}"
+    async with websockets.connect(uri) as websocket:
+        payload = {
+            "apiName": "VTubeStudioPublicAPI",
+            "apiVersion": "1.0",
+            "requestID": "hotkeytrigger",
+            "messageType": "HotkeyTriggerRequest",
+            "data": {"hotkeyID": hotkey_id}
+        }
+        await websocket.send(json.dumps(payload))
+        response = await websocket.recv()
+        print(response)
+
+# 使い方例
+# asyncio.run(trigger_expression("HotkeyIDをここに"))
 ```
 
 ---
@@ -112,3 +127,4 @@ async def trigger_expression(hotkey_id: str):
 - [ ] 視聴者コメントの感情リアクション学習
 
 ---
+
