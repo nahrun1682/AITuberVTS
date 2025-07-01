@@ -1,19 +1,4 @@
-# 🎭 AITuberVTS (VTube Studio連携AIプロジェクト)
-
-**AITuberVTS** は、Pythonによる会話生成・音声合成を通じて、**VTube Studio** のLive2Dモデルを制御するAIプロジェクトです。  
-この構成は「Python = 魂」「VTS = 実体」として、喋る・動く・感じるAIの舞台を実現します。
-
----
-
-## 🌟 特徴
-
-- 🎤 ChatGPTやLangChainで発話を生成
-- 🗣 VOICEVOXなどで音声合成
-- 🧠 感情や状況に応じた表情・モーション制御
-- 📡 VTube StudioのWebSocket APIで表情・モーションをリアルタイム制御
-- 🔄 Unity不要、既存のVTSモデルを活用して高速開発
-
----
+# 🎭 AITuberVTS
 
 ## 📁 フォルダ構成
 
@@ -49,31 +34,54 @@ AITuberVTS/
 └── README.md
 ```
 
----
+## 🛠 初期セットアップ手順（pyenv + Poetry）
 
-## 🚀 セットアップ手順（Python側）
+1. **pyenvのインストール**（未導入の場合）
+   - 公式: https://github.com/pyenv/pyenv#installation
 
-### 1. Python 3.11.8 & Poetry
+2. **Python 3.11.8のインストールと有効化**
 
-```bash
-pyenv install 3.11.8
-pyenv local 3.11.8
-poetry install
-```
+   ```bash
+   pyenv install 3.11.8
+   pyenv local 3.11.8
+   python --version  # => 3.11.8 になっていることを確認
+   ```
 
-### 2. 必要パッケージ追加
+3. **Poetryのインストール**（未導入の場合）
 
-```bash
-poetry add fastapi websockets openai langchain httpx python-dotenv
-```
+   ```bash
+   curl -sSL https://install.python-poetry.org | python3 -
+   # または
+   pip install poetry
+   ```
 
-### 3. `.env` を作成
+4. **依存パッケージのインストール**
 
-```env
-OPENAI_API_KEY=sk-xxxxxxx
-VTS_HOST=localhost
-VTS_PORT=8001
-```
+   ```bash
+   poetry install
+   ```
+
+5. **仮想環境の有効化**
+
+   ```bash
+   poetry shell
+   ```
+
+6. **.envファイルの作成**
+
+   プロジェクトルートに`.env`ファイルを作成し、以下の内容を記入してください。
+
+   ```env
+   OPENAI_API_KEY=sk-xxxxxxx
+   VTS_HOST=localhost
+   VTS_PORT=8001
+   ```
+
+7. **動作確認**
+
+   ```bash
+   python backend/scripts/launch_vts_ai.py
+   ```
 
 ---
 
@@ -123,8 +131,6 @@ async def trigger_expression(hotkey_id: str, host="localhost", port=8001):
 - [ ] LangChainによる人格プロンプト制御
 - [ ] キャラごとの感情マッピング対応
 - [ ] OBS連携
-- [ ] 複数モデル・マルチキャラ構成
-- [ ] 視聴者コメントの感情リアクション学習
 
 ---
 
